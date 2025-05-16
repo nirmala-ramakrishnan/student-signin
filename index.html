@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Student Sign In/Out</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin-top: 50px;
+    }
+    input, button {
+      padding: 10px;
+      margin: 5px;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+  <h2>Student Sign In / Sign Out</h2>
+  <input type="text" id="name" placeholder="Enter your name" />
+  <br/>
+  <button onclick="sign('Sign In')">Sign In</button>
+  <button onclick="sign('Sign Out')">Sign Out</button>
+
+  <script>
+    const SCRIPT_URL = 'YOUR_SCRIPT_URL_HERE'; // Replace with your deployed Apps Script URL
+
+    function sign(action) {
+      const name = document.getElementById('name').value.trim();
+      if (!name) {
+        alert("Please enter your name.");
+        return;
+      }
+
+      fetch(SCRIPT_URL, {
+        method: 'POST',
+        body: JSON.stringify({ name: name, action: action }),
+        headers: { 'Content-Type': 'application/json' }
+      })
+      .then(response => response.text())
+      .then(data => alert("Recorded: " + action))
+      .catch(error => alert("Error: " + error));
+    }
+  </script>
+</body>
+</html>
