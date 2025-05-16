@@ -23,24 +23,50 @@
   <button onclick="sign('Sign Out')">Sign Out</button>
 
   <script>
-    const SCRIPT_URL = 'https://script.google.com/a/macros/thevillageschool.com/s/AKfycbx2CVcbty7ZmQiIH2QL0iQv9tNdH_AlrKlQG5-h7J2UNOIdpfpSxBA5vtPK-uxm4HX4/exec'; // Replace with your deployed Apps Script URL
+    <script>
+  const SCRIPT_URL = 'https://script.google.com/a/macros/thevillageschool.com/s/AKfycbx2CVcbty7ZmQiIH2QL0iQv9tNdH_AlrKlQG5-h7J2UNOIdpfpSxBA5vtPK-uxm4HX4/exec';
 
-    function sign(action) {
-      const name = document.getElementById('name').value.trim();
-      if (!name) {
-        alert("Please enter your name.");
-        return;
-      }
-
-      fetch(SCRIPT_URL, {
-        method: 'POST',
-        body: JSON.stringify({ name: name, action: action }),
-        headers: { 'Content-Type': 'application/json' }
+  // Load names from Google Sheet
+  window.onload = function () {
+    fetch(SCRIPT_URL)
+      .then(res => res.json())
+      .then(names => {
+        const dropdown = document.getElementById("studentName");
+        dropdown.innerHTML = '<option value="">-- Select your name --</option>';
+        names.forEach(name => {
+          const option = document.createElement("option");
+          option.value = name;
+          option.textContent = name;
+          dropdown.appendChild(option);
+        });
       })
-      .then(response => response.text())
-      .then(data => alert("Recorded: " + action))
-      .catch(error => alert("Error: " + error));
+      .catch(err => {
+        alert("Failed to load student names.");
+        console.error(err);
+      });
+  };
+
+  function sign(action) {
+    const name = document.getElementById('studentName').value;
+    if (!name) {
+      alert("Please select your name.");
+      return;
     }
+
+    fetch(SCRIPT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: name, action: action })
+    })
+      .then(response => response.text())
+      .then(data => alert("Success: " + data))
+      .catch(error => {
+        alert("Error: " + error);
+        console.error(error);
+      });
+  }
+</script>
+
   </script>
 </body>
 </html>
